@@ -5,14 +5,14 @@ metadata:
   namespace: argocd
 spec:
   description: Retail Store Sample Application
-  
+
   sourceRepos:
-    - 'https://github.com/LondheShubham153/retail-store-sample-app'
-  
+    - 'https://github.com/deepaksoam313/retail-store-sample-app'
+
   destinations:
     - namespace: retail-store
       server: https://kubernetes.default.svc
-  
+
   clusterResourceWhitelist:
     - group: ''
       kind: Namespace
@@ -22,7 +22,7 @@ spec:
       kind: ClusterRoleBinding
     - group: 'cert-manager.io'
       kind: ClusterIssuer
-  
+
   namespaceResourceWhitelist:
     - group: ''
       kind: ConfigMap
@@ -41,4 +41,4 @@ spec:
     - group: 'autoscaling'
       kind: HorizontalPodAutoscaler
     - group: 'policy'
-      kind: PodDisruptionBudget 
+      kind: PodDisruptionBudget
