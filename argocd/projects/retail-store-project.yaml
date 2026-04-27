@@ -8,37 +8,24 @@ spec:
 
   sourceRepos:
     - 'https://github.com/deepaksoam313/retail-store-sample-app'
+    # UPDATE 1: Allow the Grafana Helm repo so Loki can be downloaded
+    - 'https://grafana.github.io/helm-charts'
 
   destinations:
     - namespace: retail-store
       server: https://kubernetes.default.svc
+    # UPDATE 2: Allow the monitoring namespace so Loki has a place to live
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
 
   clusterResourceWhitelist:
-    - group: ''
-      kind: Namespace
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRole
-    - group: 'rbac.authorization.k8s.io'
-      kind: ClusterRoleBinding
-    - group: 'cert-manager.io'
-      kind: ClusterIssuer
+    # UPDATE 3: Allow all groups/kinds at the cluster level.
+    # Loki and Promtail need this to create Roles that read logs across all nodes.
+    - group: '*'
+      kind: '*'
 
   namespaceResourceWhitelist:
-    - group: ''
-      kind: ConfigMap
-    - group: ''
-      kind: Secret
-    - group: ''
-      kind: Service
-    - group: ''
-      kind: ServiceAccount
-    - group: 'apps'
-      kind: Deployment
-    - group: 'apps'
-      kind: StatefulSet
-    - group: 'networking.k8s.io'
-      kind: Ingress
-    - group: 'autoscaling'
-      kind: HorizontalPodAutoscaler
-    - group: 'policy'
-      kind: PodDisruptionBudget
+    # UPDATE 4: Allow all groups/kinds within namespaces.
+    # This is simpler and prevents "Resource not found" errors for PDBs or new APIs.
+    - group: '*'
+      kind: '*'
