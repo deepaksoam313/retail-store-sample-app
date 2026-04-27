@@ -4,8 +4,6 @@ metadata:
   name: loki-stack
   namespace: argocd
   annotations:
-    # We set a lower sync-wave (0) so the logging stack starts
-    # before or with the microservices (sync-wave 1)
     argocd.argoproj.io/sync-wave: "0"
 spec:
   project: retail-store
@@ -20,16 +18,16 @@ spec:
             create: true
             name: loki-stack
             annotations:
-              # IMPORTANT: Replace with the actual ARN from your terraform apply output
-              eks.amazonaws.com/role-arn: arn:aws:iam::964476970973:role/retail-store-YOUR_SUFFIX-loki-s3-role
+              # Updated with your zssn suffix
+              eks.amazonaws.com/role-arn: arn:aws:iam::964476970973:role/retail-store-zssn-loki-s3-role
           config:
             storage_config:
               aws:
-                # Replace with your actual bucket name from terraform
-                s3: s3://ap-south-1/retail-store-YOUR_SUFFIX-loki-logs
+                # Updated with your specific bucket name
+                s3: s3://ap-south-1/retail-store-zssn-loki-logs
                 region: ap-south-1
           persistence:
-            enabled: false # We are using S3 for durability
+            enabled: false
         promtail:
           enabled: true
           config:
