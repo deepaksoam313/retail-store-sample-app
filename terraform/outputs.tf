@@ -119,3 +119,26 @@ output "useful_commands" {
     describe_cluster    = "kubectl cluster-info"
   }
 }
+
+# =============================================================================
+# KMS & SECRETS MANAGER
+# =============================================================================
+
+output "kms_secrets_key_arn" {
+  description = "ARN of the KMS key used for secrets encryption"
+  value       = aws_kms_key.secrets.arn
+}
+
+output "secrets_irsa_role_arn" {
+  description = "IAM role ARN for pods to access Secrets Manager (annotate service accounts with this)"
+  value       = module.secrets_irsa.iam_role_arn
+}
+
+output "secret_arns" {
+  description = "ARNs of Secrets Manager secrets per service"
+  value = {
+    cart     = aws_secretsmanager_secret.cart.arn
+    orders   = aws_secretsmanager_secret.orders.arn
+    checkout = aws_secretsmanager_secret.checkout.arn
+  }
+}

@@ -46,6 +46,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "carts.configMapName" . }}
+            {{- if .Values.secrets.enabled }}
+            - secretRef:
+                name: {{ .Values.secrets.name }}
+            {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.Version }}"
@@ -64,10 +68,23 @@ spec:
           volumeMounts:
             - mountPath: /tmp
               name: tmp-volume
+            {{- if .Values.secrets.enabled }}
+            - name: secrets-store
+              mountPath: "/mnt/secrets"
+              readOnly: true
+            {{- end }}
       volumes:
         - name: tmp-volume
           emptyDir:
             medium: Memory
+        {{- if .Values.secrets.enabled }}
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.secrets.providerClass }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
