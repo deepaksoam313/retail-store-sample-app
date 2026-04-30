@@ -49,9 +49,9 @@ module "secrets_irsa" {
     main = {
       provider_arn               = module.retail_app_eks.oidc_provider_arn
       namespace_service_accounts = [
-        "retail-store:cart",
-        "retail-store:orders",
-        "retail-store:checkout",
+        "retail-store:retail-store-cart-carts",
+        "retail-store:retail-store-orders-orders",
+        "retail-store:retail-store-checkout-checkout",
       ]
     }
   }
