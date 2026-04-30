@@ -94,4 +94,3 @@ opentelemetry:
 podDisruptionBudget:
   enabled: true
   minAvailable: 2
-  maxUnavailable: 1
