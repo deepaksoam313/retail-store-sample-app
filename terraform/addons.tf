@@ -127,5 +127,11 @@ module "eks_addons" {
     ]
   }
 
+  # =============================================================================
+  # SECRETS STORE CSI DRIVER - Mount Secrets Manager secrets as volumes
+  # =============================================================================
+  enable_secrets_store_csi_driver              = true
+  enable_secrets_store_csi_driver_provider_aws = true
+
   depends_on = [module.retail_app_eks]
 }

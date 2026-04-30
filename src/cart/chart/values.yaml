@@ -82,6 +82,12 @@ dynamodb:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+secrets:
+  enabled: true
+  name: cart-secrets
+  providerClass: cart-secrets
+  irsaRoleArn: ""  # auto-populated by Terraform via argocd.tf
+
 opentelemetry:
   enabled: false
   instrumentation: ""

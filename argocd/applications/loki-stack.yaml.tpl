@@ -3,8 +3,6 @@ kind: Application
 metadata:
   name: loki-stack
   namespace: argocd
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: retail-store
   source:
@@ -17,15 +15,13 @@ spec:
           serviceAccount:
             create: true
             name: loki-stack
-            annotations:
-              # Updated with your zssn suffix
-              eks.amazonaws.com/role-arn: arn:aws:iam::964476970973:role/retail-store-zssn-loki-s3-role
+            annotations: ${loki_iam_role_arn}
+              eks.amazonaws.com/role-arn:
           config:
             storage_config:
               aws:
-                # Updated with your specific bucket name
-                s3: s3://ap-south-1/retail-store-zssn-loki-logs
-                region: ap-south-1
+                s3: s3://${region}/${s3_bucket_name}
+                region: ${region}
           persistence:
             enabled: false
         promtail:
