@@ -49,6 +49,7 @@ spec:
             {{- if .Values.secrets.enabled }}
             - secretRef:
                 name: {{ .Values.secrets.name }}
+                optional: true
             {{- end }}
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
