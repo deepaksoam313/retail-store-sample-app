@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: loki-stack
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  project: retail-store
+  source:
+    repoURL: 'https://grafana.github.io/helm-charts'
+    targetRevision: 2.10.2
+    chart: loki-stack
+    helm:
+      values: |
+        loki:
+          serviceAccount:
+            create: true
+            name: loki-stack
+            annotations:
+              # Updated with your zssn suffix
+              eks.amazonaws.com/role-arn: arn:aws:iam::964476970973:role/retail-store-zssn-loki-s3-role
+          config:
+            storage_config:
+              aws:
+                # Updated with your specific bucket name
+                s3: s3://ap-south-1/retail-store-zssn-loki-logs
+                region: ap-south-1
+          persistence:
+            enabled: false
+        promtail:
+          enabled: true
+          config:
+            clients:
+              - url: http://loki-stack.monitoring:3100/loki/api/v1/push
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

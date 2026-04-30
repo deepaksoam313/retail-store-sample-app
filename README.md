@@ -47,7 +47,7 @@ The Retail Store Sample App demonstrates a modern microservices architecture dep
 - **Checkout Service**: Node.js-based checkout orchestration API
 
 
-## Application Architecture
+## Application Architecture -
 
 The application has been deliberately over-engineered to generate multiple de-coupled components. These components generally have different infrastructure dependencies, and may support multiple "backends" (example: Carts service supports MongoDB or DynamoDB).
 

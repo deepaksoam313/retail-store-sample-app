@@ -1,9 +1,7 @@
 # Build Stage
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023 AS build-env
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
+# Minimal dependencies for Go build
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     git \
     golang \
@@ -11,28 +9,26 @@ RUN dnf --setopt=install_weak_deps=False install -q -y \
     dnf clean all
 
 RUN mkdir -p "${GOPATH}/src" "${GOPATH}/bin" /appsrc
-
 WORKDIR /appsrc
 
-ENV GOPROXY=https://goproxy.io,direct
+# MODIFIED: Changed goproxy.io (failing with 502) to the stable Google proxy
+ENV GOPROXY=https://proxy.golang.org,direct
 
+# Optimization: Copy only dependencies first to leverage Docker layer caching
 COPY go.mod go.sum ./
 RUN go mod download
 
+# Copy source code and build
 COPY . .
-
 RUN go build -o main main.go
 
-# Final stage
+# Final Stage (Runtime)
 FROM public.ecr.aws/amazonlinux/amazonlinux:2023
 
 ENV APPUSER=appuser
 ENV APPUID=1000
 ENV APPGID=1000
 
-# We tell DNF not to install Recommends and Suggests packages, which are
-# weak dependencies in DNF terminology, thus keeping our installed set of
-# packages as minimal as possible.
 RUN dnf --setopt=install_weak_deps=False install -q -y \
     shadow-utils \
     && \
@@ -48,9 +44,11 @@ RUN useradd \
 WORKDIR /app
 USER appuser
 
+# Copy the binary from the build environment
 COPY --chown=appuser:appuser --from=build-env /appsrc/main /app/
 
-COPY ./ATTRIBUTION.md ./LICENSES.md
+# MODIFIED: Simplified to only copy what exists to prevent build failures
+COPY ./ATTRIBUTION.md ./
 
 ENV GIN_MODE=release
 
