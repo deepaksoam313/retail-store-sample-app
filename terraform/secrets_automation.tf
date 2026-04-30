@@ -25,6 +25,7 @@ resource "kubectl_manifest" "cart_secret_provider_class" {
     spec:
       provider: aws
       parameters:
+        region: ${var.aws_region}
         objects: |
           - objectName: "${local.cluster_name}/cart"
             objectType: "secretsmanager"
@@ -35,12 +36,6 @@ resource "kubectl_manifest" "cart_secret_provider_class" {
                 objectAlias: RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME
               - path: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
                 objectAlias: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
-              - path: POSTGRES_PASSWORD
-                objectAlias: POSTGRES_PASSWORD
-              - path: POSTGRES_USERNAME
-                objectAlias: POSTGRES_USERNAME
-              - path: POSTGRES_DB
-                objectAlias: POSTGRES_DB
       secretObjects:
       - secretName: cart-secrets
         type: Opaque
@@ -51,12 +46,6 @@ resource "kubectl_manifest" "cart_secret_provider_class" {
           key: RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME
         - objectName: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
           key: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
-        - objectName: POSTGRES_PASSWORD
-          key: POSTGRES_PASSWORD
-        - objectName: POSTGRES_USERNAME
-          key: POSTGRES_USERNAME
-        - objectName: POSTGRES_DB
-          key: POSTGRES_DB
   YAML
 
   depends_on = [
@@ -77,6 +66,7 @@ resource "kubectl_manifest" "orders_secret_provider_class" {
     spec:
       provider: aws
       parameters:
+        region: ${var.aws_region}
         objects: |
           - objectName: "${local.cluster_name}/orders"
             objectType: "secretsmanager"

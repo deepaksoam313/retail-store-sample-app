@@ -31,6 +31,23 @@ resource "aws_iam_policy" "secrets_access" {
           "kms:DescribeKey"
         ]
         Resource = aws_kms_key.secrets.arn
+      },
+      {
+        Sid    = "DynamoDBCartAccess"
+        Effect = "Allow"
+        Action = [
+          "dynamodb:DescribeTable",
+          "dynamodb:PutItem",
+          "dynamodb:GetItem",
+          "dynamodb:DeleteItem",
+          "dynamodb:UpdateItem",
+          "dynamodb:Query",
+          "dynamodb:Scan"
+        ]
+        Resource = [
+          aws_dynamodb_table.cart.arn,
+          "${aws_dynamodb_table.cart.arn}/index/*"
+        ]
       }
     ]
   })
