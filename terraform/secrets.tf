@@ -19,20 +19,25 @@ resource "aws_kms_alias" "secrets" {
 # SECRETS MANAGER - PER SERVICE
 # =============================================================================
 
-# Cart Service - PostgreSQL config
-# NOTE: Secret value must be created by admin BEFORE terraform apply
-# aws secretsmanager create-secret \
-#   --name "<cluster-name>/cart" \
-#   --secret-string '{"POSTGRES_PASSWORD":"<your-password>","POSTGRES_USERNAME":"cart_user","POSTGRES_DB":"cartdb"}'
+# Cart Service - config
+# Terraform creates the secret container
+# Secret value is set by Terraform using the DynamoDB table created above
 resource "aws_secretsmanager_secret" "cart" {
   name                    = "${local.cluster_name}/cart"
-  description             = "Cart service configuration — value set by admin"
+  description             = "Cart service configuration"
   kms_key_id              = aws_kms_key.secrets.arn
   recovery_window_in_days = 7
   tags                    = local.common_tags
 }
-# NOTE: No secret_version here — admin sets the value manually
-# Terraform only creates the secret container, not the value
+
+resource "aws_secretsmanager_secret_version" "cart" {
+  secret_id = aws_secretsmanager_secret.cart.id
+  secret_string = jsonencode({
+    RETAIL_CART_PERSISTENCE_PROVIDER              = "dynamodb"
+    RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME   = aws_dynamodb_table.cart.name  # ← from Terraform
+    RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE = "false"                        # ← Terraform creates table, not app
+  })
+}
 
 # Orders Service - PostgreSQL config
 resource "aws_secretsmanager_secret" "orders" {

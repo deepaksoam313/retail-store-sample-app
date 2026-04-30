@@ -15,13 +15,31 @@ spec:
           serviceAccount:
             create: true
             name: loki-stack
-            annotations: ${loki_iam_role_arn}
-              eks.amazonaws.com/role-arn:
+            annotations:
+              eks.amazonaws.com/role-arn: ${loki_iam_role_arn}
           config:
+            auth_enabled: false
+            schema_config:
+              configs:
+              - from: "2020-10-24"
+                store: boltdb-shipper
+                object_store: s3
+                schema: v11
+                index:
+                  prefix: index_
+                  period: 24h
             storage_config:
               aws:
                 s3: s3://${region}/${s3_bucket_name}
                 region: ${region}
+              boltdb_shipper:
+                active_index_directory: /data/loki/boltdb-shipper-active
+                cache_location: /data/loki/boltdb-shipper-cache
+                cache_ttl: 24h
+                shared_store: s3
+            compactor:
+              working_directory: /data/loki/boltdb-shipper-compactor
+              shared_store: s3
           persistence:
             enabled: false
         promtail:
