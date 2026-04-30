@@ -31,11 +31,7 @@ resource "aws_iam_role" "github_actions" {
             "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
           }
           StringLike = {
-            # Allow gitops branch AND workflow_dispatch from any ref
-            "token.actions.githubusercontent.com:sub" = [
-              "repo:deepaksoam313/retail-store-sample-app:ref:refs/heads/gitops",
-              "repo:deepaksoam313/retail-store-sample-app:*"
-            ]
+            "token.actions.githubusercontent.com:sub" = "repo:deepaksoam313/retail-store-sample-app:*"
           }
         }
       }
