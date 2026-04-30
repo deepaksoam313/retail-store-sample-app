@@ -98,7 +98,7 @@ jobs:
         run: |
           SERVICE="${{ matrix.service }}"
           TAG="$(echo ${{ github.sha }} | cut -c1-7)"
-          AWS_ACCOUNT_ID="${{ secrets.AWS_ACCOUNT_ID }}"
+          AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
           ECR_REPO="${AWS_ACCOUNT_ID}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/retail-store-${SERVICE}"
           
           echo "🔨 Building ${SERVICE}:${TAG}"
