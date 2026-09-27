@@ -141,5 +141,3 @@ module "eks_addons" {
     most_recent = true
   }
 
-  depends_on = [module.retail_app_eks]
-}
