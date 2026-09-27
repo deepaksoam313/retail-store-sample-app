@@ -55,10 +55,15 @@ module "retail_app_eks" {
   cluster_name    = local.cluster_name
   cluster_version = var.kubernetes_version
 
+  depends_on = [module.vpc]
+
   # Cluster access configuration
   cluster_endpoint_public_access           = true
   cluster_endpoint_private_access          = true
   enable_cluster_creator_admin_permissions = true
+
+  # EKS Access Entries — AWS native RBAC (replaces aws-auth ConfigMap)
+  authentication_mode = "API_AND_CONFIG_MAP"
 
   # EKS Auto Mode configuration - simplified node management
   cluster_compute_config = {
