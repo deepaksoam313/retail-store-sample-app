@@ -133,5 +133,13 @@ module "eks_addons" {
   enable_secrets_store_csi_driver              = true
   enable_secrets_store_csi_driver_provider_aws = true
 
+  # =============================================================================
+  # VPA - Vertical Pod Autoscaler
+  # =============================================================================
+  enable_vpa = true
+  vpa = {
+    most_recent = true
+  }
+
   depends_on = [module.retail_app_eks]
 }

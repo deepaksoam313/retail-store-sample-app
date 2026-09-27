@@ -55,3 +55,28 @@ variable "enable_monitoring" {
   type        = bool
   default     = true
 }
+
+# =============================================================================
+# RBAC TEAM VARIABLES — read from AWS SSM Parameter Store
+# No tfvars needed — values stored securely in SSM
+# =============================================================================
+
+# SSM data sources — fetch user lists from SSM
+data "aws_ssm_parameter" "developer_users" {
+  name = "/retail-store/rbac/developer_users"
+}
+
+data "aws_ssm_parameter" "devops_users" {
+  name = "/retail-store/rbac/devops_users"
+}
+
+data "aws_ssm_parameter" "sre_users" {
+  name = "/retail-store/rbac/sre_users"
+}
+
+# Local values — parse JSON string from SSM into list
+locals {
+  developer_users = jsondecode(data.aws_ssm_parameter.developer_users.value)
+  devops_users    = jsondecode(data.aws_ssm_parameter.devops_users.value)
+  sre_users       = jsondecode(data.aws_ssm_parameter.sre_users.value)
+}

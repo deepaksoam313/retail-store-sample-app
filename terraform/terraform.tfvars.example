@@ -1,0 +1,20 @@
+# =============================================================================
+# TEAM USERS CONFIGURATION
+# Copy this file to terraform.tfvars and fill in your values
+# NEVER commit terraform.tfvars to Git
+# =============================================================================
+
+# Developer Team — view only access to retail-store namespace
+# Can: get/list/watch pods, logs, deployments, services
+# Cannot: delete, exec, access secrets, access other namespaces
+developer_users = []   # e.g. ["john", "sarah"]
+
+# DevOps Team — deploy and manage retail-store namespace
+# Can: create/update/delete deployments, exec into pods
+# Cannot: access secrets, modify RBAC, access other namespaces
+devops_users = []      # e.g. ["alice", "bob"]
+
+# SRE Team — read everything across all namespaces + exec into pods
+# Can: read all resources, exec into pods, view nodes
+# Cannot: modify deployments, modify RBAC, delete resources
+sre_users = []         # e.g. ["charlie"]
